@@ -16,14 +16,14 @@ import es.um.dis.tecnomod.huron.dto.MetricResult;
 import es.um.dis.tecnomod.huron.main.Config;
 import es.um.dis.tecnomod.huron.services.OntologyUtils;
 import es.um.dis.tecnomod.huron.services.RDFUtils;
-import es.um.dis.tecnomod.oquo.utils.Namespaces;
+import es.um.dis.tecnomod.huron.main.Prefixes;
 import es.um.dis.tecnomod.oquo.utils.RankingFunctionTypes;
 
 /**
  * The Class SynonymsPerPropertyMetric.
  */
 public class SynonymsPerPropertyMetric extends AnnotationsPerEntityAbstractMetric{
-	
+
 	public SynonymsPerPropertyMetric() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -38,55 +38,55 @@ public class SynonymsPerPropertyMetric extends AnnotationsPerEntityAbstractMetri
 
 	/** The Constant METRIC_NAME. */
 	private static final String METRIC_NAME = "Synonyms per property";
-	
+
 	/* (non-Javadoc)
 	 * @see metrics.Metric#calculate()
 	 */
 	@Override
 	public MetricResult calculate() throws OWLOntologyCreationException, FileNotFoundException, IOException, Exception {
-		
+
 		String ontologyIRI = RDFUtils.getOntologyIdentifier(getOntology());
 		Calendar timestamp = Calendar.getInstance();
 		int numberOfSynonyms = 0;
 		int totalProperties = 0;
-		
+
 		for(OWLObjectProperty owlObjectProperty : super.getOntology().objectPropertiesInSignature(this.getConfig().getImports()).collect(Collectors.toList())){
 			if(OntologyUtils.isObsolete(owlObjectProperty, getOntology(), this.getConfig().getImports()) || owlObjectProperty.isOWLTopObjectProperty()){
 				continue;
 			}
 			totalProperties++;
 			int localNumberOfSynonyms = getNumberOfSynonyms(owlObjectProperty);
-			
+
 			this.notifyExporterListeners(ontologyIRI, owlObjectProperty.getIRI().toString(), OWL.ObjectProperty.getURI(), Integer.valueOf(localNumberOfSynonyms), timestamp, Collections.emptyList());
 			numberOfSynonyms = numberOfSynonyms + localNumberOfSynonyms;
 		}
-		
+
 		for(OWLDataProperty owlDataProperty : super.getOntology().dataPropertiesInSignature(this.getConfig().getImports()).collect(Collectors.toList())){
 			if(OntologyUtils.isObsolete(owlDataProperty, getOntology(), this.getConfig().getImports()) || owlDataProperty.isOWLTopDataProperty()){
 				continue;
 			}
 			totalProperties++;
 			int localNumberOfSynonyms = getNumberOfSynonyms(owlDataProperty);
-			
+
 			this.notifyExporterListeners(ontologyIRI, owlDataProperty.getIRI().toString(), OWL.DatatypeProperty.getURI(), Integer.valueOf(localNumberOfSynonyms), timestamp, Collections.emptyList());
 			numberOfSynonyms = numberOfSynonyms + localNumberOfSynonyms;
 		}
-		
+
 		for(OWLAnnotationProperty owlAnnotationProperty : super.getOntology().annotationPropertiesInSignature(this.getConfig().getImports()).collect(Collectors.toList())){
 			if(OntologyUtils.isObsolete(owlAnnotationProperty, getOntology(), this.getConfig().getImports())){
 				continue;
 			}
 			totalProperties++;
 			int localNumberOfSynonyms = getNumberOfSynonyms(owlAnnotationProperty);
-			
+
 			this.notifyExporterListeners(ontologyIRI, owlAnnotationProperty.getIRI().toString(), OWL.AnnotationProperty.getURI(), Integer.valueOf(localNumberOfSynonyms), timestamp, Collections.emptyList());
 			numberOfSynonyms = numberOfSynonyms + localNumberOfSynonyms;
 		}
-		
+
 		double metricValue = ((double) (numberOfSynonyms)) / totalProperties;
 		this.notifyExporterListeners(ontologyIRI, ontologyIRI, OWL.Ontology.getURI(), Double.valueOf(metricValue), timestamp, Collections.emptyList());
 		return new MetricResult(metricValue);
-	
+
 	}
 
 
@@ -101,7 +101,7 @@ public class SynonymsPerPropertyMetric extends AnnotationsPerEntityAbstractMetri
 
 	@Override
 	public String getIRI() {
-		return Namespaces.OQUO_NS + "SynonymsPerPropertyMetric";
+		return Prefixes.OQUO_HURON_NS + "SynonymsPerPropertyMetric";
 	}
 
 
@@ -109,7 +109,7 @@ public class SynonymsPerPropertyMetric extends AnnotationsPerEntityAbstractMetri
 	public String getObservablePropertyIRI() {
 		return RDFUtils.SYNONYMS;
 	}
-	
+
 	@Override
 	public String getRankingFunctionIRI() {
 		return RankingFunctionTypes.RANKING_FUNCTION_HIGHER_BEST;

@@ -14,8 +14,8 @@ import es.um.dis.tecnomod.huron.dto.MetricResult;
 import es.um.dis.tecnomod.huron.issues.IssueTypes;
 import es.um.dis.tecnomod.huron.main.Config;
 import es.um.dis.tecnomod.huron.services.RDFUtils;
+import es.um.dis.tecnomod.huron.main.Prefixes;
 import es.um.dis.tecnomod.oquo.dto.IssueInfoDTO;
-import es.um.dis.tecnomod.oquo.utils.Namespaces;
 import es.um.dis.tecnomod.oquo.utils.RankingFunctionTypes;
 
 public class DataPropertiesWithNoNameMetric extends AnnotationsPerEntityAbstractMetric {
@@ -34,10 +34,10 @@ public class DataPropertiesWithNoNameMetric extends AnnotationsPerEntityAbstract
 
 	/** The Constant NAME. */
 	private static final String METRIC_NAME = "DataProperties with no name";
-	
+
 	@Override
 	public MetricResult calculate() throws OWLOntologyCreationException, FileNotFoundException, IOException, Exception {
-		
+
 		String ontologyIRI = RDFUtils.getOntologyIdentifier(getOntology());
 		Calendar timestamp = Calendar.getInstance();
 		int numberOfDataPropertiesWithNoName = 0;
@@ -45,23 +45,23 @@ public class DataPropertiesWithNoNameMetric extends AnnotationsPerEntityAbstract
 		for(OWLDataProperty owlDataProperty : super.getOntology().dataPropertiesInSignature(this.getConfig().getImports()).collect(Collectors.toList())){
 			if(owlDataProperty.isOWLTopDataProperty()){
 				continue;
-			}			
+			}
 			int localNumberOfNames = getNumberOfNames(owlDataProperty);
 			if (localNumberOfNames == 0) {
 				IssueInfoDTO issue = new IssueInfoDTO(IssueTypes.DATA_PROPERTY_WITH_NO_NAME_ISSUE, owlDataProperty.getIRI().toString(), String.format("The data property %s does not have any name.", owlDataProperty.getIRI().toQuotedString()));
 				this.notifyExporterListeners(ontologyIRI, owlDataProperty.getIRI().toString(), OWL.DatatypeProperty.getURI(), Integer.valueOf(1), timestamp, issue);
 				numberOfDataPropertiesWithNoName++;
 			}else {
-				
+
 				this.notifyExporterListeners(ontologyIRI, owlDataProperty.getIRI().toString(), OWL.DatatypeProperty.getURI(), Integer.valueOf(0), timestamp, Collections.emptyList());
 			}
 			numberOfEntities ++;
 		}
-		
+
 		double metricValue = ((double) (numberOfDataPropertiesWithNoName)) / numberOfEntities;
 		this.notifyExporterListeners(ontologyIRI, ontologyIRI, OWL.Ontology.getURI(), Double.valueOf(metricValue), timestamp, Collections.emptyList());
 
-		return new MetricResult(metricValue);	
+		return new MetricResult(metricValue);
 	}
 
 
@@ -69,10 +69,10 @@ public class DataPropertiesWithNoNameMetric extends AnnotationsPerEntityAbstract
 	public String getName() {
 		return METRIC_NAME;
 	}
-	
+
 	@Override
 	public String getIRI() {
-		return Namespaces.OQUO_NS + "DataPropertiesWithNoNameMetric";
+		return Prefixes.OQUO_HURON_NS + "DataPropertiesWithNoNameMetric";
 	}
 
 
@@ -80,7 +80,7 @@ public class DataPropertiesWithNoNameMetric extends AnnotationsPerEntityAbstract
 	public String getObservablePropertyIRI() {
 		return RDFUtils.NAMES;
 	}
-	
+
 	@Override
 	public String getRankingFunctionIRI() {
 		return RankingFunctionTypes.RANKING_FUNCTION_LOWER_BEST;

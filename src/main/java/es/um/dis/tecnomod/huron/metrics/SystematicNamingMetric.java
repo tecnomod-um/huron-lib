@@ -32,8 +32,8 @@ import es.um.dis.tecnomod.huron.issues.IssueTypes;
 import es.um.dis.tecnomod.huron.main.Config;
 import es.um.dis.tecnomod.huron.services.OntologyUtils;
 import es.um.dis.tecnomod.huron.services.RDFUtils;
+import es.um.dis.tecnomod.huron.main.Prefixes;
 import es.um.dis.tecnomod.oquo.dto.IssueInfoDTO;
-import es.um.dis.tecnomod.oquo.utils.Namespaces;
 import es.um.dis.tecnomod.oquo.utils.RankingFunctionTypes;
 
 /**
@@ -47,21 +47,21 @@ public class SystematicNamingMetric extends OntoenrichMetric {
 	public SystematicNamingMetric() {
 		super();
 	}
-	
+
 	public SystematicNamingMetric(Config config) {
 		super(config);
 	}
 
 	/** The Constant LOGGER. */
 	private final static Logger LOGGER = Logger.getLogger(SystematicNamingMetric.class.getName());
-	
+
 	/** The Constant METRIC_NAME. */
 	private static final String METRIC_NAME = "Systematic naming";
-	
+
 	/** The reasoner. */
 	private OWLReasoner reasoner;
-	
-	
+
+
 
 	/* (non-Javadoc)
 	 * @see metrics.Metric#calculate()
@@ -69,10 +69,10 @@ public class SystematicNamingMetric extends OntoenrichMetric {
 	@Override
 	public MetricResult calculate() throws OWLOntologyCreationException, FileNotFoundException, IOException, Exception {
 		/* Write header for detailed output file */
-		
+
 		String ontologyIRI = RDFUtils.getOntologyIdentifier(getOntology());
 		Calendar timestamp = Calendar.getInstance();
-		
+
 		// STEP 1: create the lexical environment
 		LexicalEnvironment lexicalEnvironment = this.getLexicalEnvironment();
 
@@ -82,7 +82,7 @@ public class SystematicNamingMetric extends OntoenrichMetric {
 		// STEP 2: Perform lexical analysis with threshold
 		int numberOfClassesThreshold = this.getNumberOfClassesThreshold();
 		List<LexicalRegularity> lexicalRegularities = lexicalEnvironment.searchAllPatterns(numberOfClassesThreshold /* Minimum Coverage (in labels) */);
-				
+
 
 		// STEP 3: apply a filter to get just LRs that are classes
 		RemoveNoClasses.execute(lexicalRegularities);
@@ -100,15 +100,15 @@ public class SystematicNamingMetric extends OntoenrichMetric {
 				subClassesOfA.remove(getOntology().getOWLOntologyManager().getOWLDataFactory().getOWLNothing());
 				Set<OWLClass> classeslexicallyRelatedWithA = this.getClassesWithPattern(lexicalRegularity);
 				classeslexicallyRelatedWithA.remove(owlClassA);
-				
+
 				Set<OWLClass> localPositiveCases = SetUtils.intersection(subClassesOfA, classeslexicallyRelatedWithA);
 				int localPositiveCasesCount = localPositiveCases.size();
-				
+
 				Set<OWLClass> localNegativeCases = SetUtils.difference(subClassesOfA, classeslexicallyRelatedWithA);
 				int localNegativeCasesCount = localNegativeCases.size();
-				
+
 				double localMetricResult = (double) localPositiveCasesCount / (localPositiveCasesCount + localNegativeCasesCount);
-				
+
 
 				positiveCasesCount += localPositiveCasesCount;
 				negativeCasesCount += localNegativeCasesCount;
@@ -117,7 +117,7 @@ public class SystematicNamingMetric extends OntoenrichMetric {
 					String cLabel = lexicalEnvironment.getLabelById(c.getIRI().toString()).getStrLabel();
 					String issueMsg = String.format(ISSUE_MSG_TEMPLATE, c.toStringID(), cLabel, owlClassA.toStringID(), classALabel, cLabel, classALabel);
 					LOGGER.log(Level.INFO, issueMsg);
-					IssueInfoDTO issue = new IssueInfoDTO(IssueTypes.SYSTEMATIC_NAMING_ISSUE, owlClassA.toStringID(), c.toStringID(), issueMsg); 
+					IssueInfoDTO issue = new IssueInfoDTO(IssueTypes.SYSTEMATIC_NAMING_ISSUE, owlClassA.toStringID(), c.toStringID(), issueMsg);
 					issues.add(issue);
 				}
 				this.notifyExporterListeners(ontologyIRI, owlClassA.getIRI().toString(), OWL.Class.getURI(), Double.valueOf(localMetricResult), timestamp, issues);
@@ -128,12 +128,12 @@ public class SystematicNamingMetric extends OntoenrichMetric {
 		// STEP 5: return the calculated value
 		double metricValue = (double) positiveCasesCount / (positiveCasesCount + negativeCasesCount);
 		this.notifyExporterListeners(ontologyIRI, ontologyIRI, OWL.Ontology.getURI(), Double.valueOf(metricValue), timestamp, Collections.emptyList());
-		
+
 		return new MetricResult(metricValue);
 
 	}
 
-	
+
 	/**
 	 * Gets the classes with pattern.
 	 *
@@ -148,7 +148,7 @@ public class SystematicNamingMetric extends OntoenrichMetric {
 			if (!OntologyUtils.isObsolete(classWithPattern, getOntology(), this.getConfig().getImports())) {
 				classesWithPattern.add(classWithPattern);
 			}
-			
+
 		}
 		return classesWithPattern;
 	}
@@ -161,7 +161,7 @@ public class SystematicNamingMetric extends OntoenrichMetric {
 	 * @return the representing classes
 	 */
 	private Set<OWLClass> getRepresentingClasses(LexicalEnvironment lexicalEnvironment, LexicalRegularity lexicalRegularity) {
-		
+
 		Set<Label> labels = lexicalEnvironment.getLabel(lexicalRegularity);
 		Set<OWLClass> classes = new HashSet<OWLClass>();
 		for (Label label : labels) {
@@ -172,7 +172,7 @@ public class SystematicNamingMetric extends OntoenrichMetric {
 		}
 		return classes;
 	}
-	
+
 	/**
 	 * Creates the reasoner.
 	 *
@@ -191,8 +191,8 @@ public class SystematicNamingMetric extends OntoenrichMetric {
 		}
 		return reasoner;
 	}
-	
-	
+
+
 
 
 	/* (non-Javadoc)
@@ -202,17 +202,17 @@ public class SystematicNamingMetric extends OntoenrichMetric {
 	public String getName() {
 		return METRIC_NAME;
 	}
-	
+
 	@Override
 	public String getIRI() {
-		return Namespaces.OQUO_NS + "SystematicNamingMetric";
+		return Prefixes.OQUO_HURON_NS + "SystematicNamingMetric";
 	}
 
 	@Override
 	public String getObservablePropertyIRI() {
 		return RDFUtils.SYSTEMATIC_NAMING_PRINCIPLE;
 	}
-	
+
 	@Override
 	public String getRankingFunctionIRI() {
 		return RankingFunctionTypes.RANKING_FUNCTION_HIGHER_BEST;

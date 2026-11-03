@@ -13,14 +13,14 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import es.um.dis.tecnomod.huron.dto.MetricResult;
 import es.um.dis.tecnomod.huron.main.Config;
 import es.um.dis.tecnomod.huron.services.RDFUtils;
-import es.um.dis.tecnomod.oquo.utils.Namespaces;
+import es.um.dis.tecnomod.huron.main.Prefixes;
 import es.um.dis.tecnomod.oquo.utils.RankingFunctionTypes;
 
 /**
  * The Class NamesPerAnnotationPropertyMetric.
  */
 public class NamesPerAnnotationPropertyMetric extends AnnotationsPerEntityAbstractMetric{
-	
+
 	public NamesPerAnnotationPropertyMetric() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -41,23 +41,23 @@ public class NamesPerAnnotationPropertyMetric extends AnnotationsPerEntityAbstra
 	 */
 	@Override
 	public MetricResult calculate() throws OWLOntologyCreationException, FileNotFoundException, IOException, Exception {
-		
+
 		String ontologyIRI = RDFUtils.getOntologyIdentifier(getOntology());
 		Calendar timestamp = Calendar.getInstance();
 		int numberOfNames = 0;
 		int numberOfEntities = 0;
 		for(OWLAnnotationProperty owlAnnotationProperty : super.getOntology().annotationPropertiesInSignature(this.getConfig().getImports()).collect(Collectors.toList())){
 			int localNumberOfNames = getNumberOfNames(owlAnnotationProperty);
-			
+
 			this.notifyExporterListeners(ontologyIRI, owlAnnotationProperty.getIRI().toString(), OWL.AnnotationProperty.getURI(), Double.valueOf(localNumberOfNames), timestamp, Collections.emptyList());
-			
+
 			numberOfNames = numberOfNames + localNumberOfNames;
 			numberOfEntities ++;
 		}
-		
+
 		double metricValue = ((double) (numberOfNames)) / numberOfEntities;
 		this.notifyExporterListeners(ontologyIRI, ontologyIRI, OWL.Ontology.getURI(), Double.valueOf(metricValue), timestamp, Collections.emptyList());
-		
+
 		return new MetricResult(metricValue);
 	}
 
@@ -69,10 +69,10 @@ public class NamesPerAnnotationPropertyMetric extends AnnotationsPerEntityAbstra
 	public String getName() {
 		return NAME;
 	}
-	
+
 	@Override
 	public String getIRI() {
-		return Namespaces.OQUO_NS + "NamesPerAnnotationPropertyMetric";
+		return Prefixes.OQUO_HURON_NS + "NamesPerAnnotationPropertyMetric";
 	}
 
 
@@ -80,7 +80,7 @@ public class NamesPerAnnotationPropertyMetric extends AnnotationsPerEntityAbstra
 	public String getObservablePropertyIRI() {
 		return RDFUtils.NAMES;
 	}
-	
+
 	@Override
 	public String getRankingFunctionIRI() {
 		return RankingFunctionTypes.RANKING_FUNCTION_HIGHER_BEST;

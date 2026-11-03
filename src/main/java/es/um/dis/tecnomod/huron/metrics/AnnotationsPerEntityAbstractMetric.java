@@ -1,6 +1,5 @@
 package es.um.dis.tecnomod.huron.metrics;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,7 +13,6 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import es.um.dis.tecnomod.huron.main.Config;
-import es.um.dis.tecnomod.huron.main.Prefixes;
 import es.um.dis.tecnomod.huron.services.OntologyUtils;
 
 /**

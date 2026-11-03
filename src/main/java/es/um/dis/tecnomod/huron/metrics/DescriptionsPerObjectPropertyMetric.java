@@ -14,14 +14,14 @@ import es.um.dis.tecnomod.huron.dto.MetricResult;
 import es.um.dis.tecnomod.huron.main.Config;
 import es.um.dis.tecnomod.huron.services.OntologyUtils;
 import es.um.dis.tecnomod.huron.services.RDFUtils;
-import es.um.dis.tecnomod.oquo.utils.Namespaces;
+import es.um.dis.tecnomod.huron.main.Prefixes;
 import es.um.dis.tecnomod.oquo.utils.RankingFunctionTypes;
 
 /**
  * The Class DescriptionsPerObjectPropertyMetric.
  */
 public class DescriptionsPerObjectPropertyMetric extends AnnotationsPerEntityAbstractMetric{
-	
+
 	public DescriptionsPerObjectPropertyMetric() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -41,7 +41,7 @@ public class DescriptionsPerObjectPropertyMetric extends AnnotationsPerEntityAbs
 	 */
 	@Override
 	public MetricResult calculate() throws OWLOntologyCreationException, FileNotFoundException, IOException, Exception {
-		
+
 		String ontologyIRI = RDFUtils.getOntologyIdentifier(getOntology());
 		Calendar timestamp = Calendar.getInstance();
 		int numberOfDescriptions = 0;
@@ -51,12 +51,12 @@ public class DescriptionsPerObjectPropertyMetric extends AnnotationsPerEntityAbs
 				continue;
 			}
 			int localNumberOfdescriptions = getNumberOfDescriptions(objectProperty);
-			
+
 			this.notifyExporterListeners(ontologyIRI, objectProperty.getIRI().toString(), OWL.ObjectProperty.getURI(), Integer.valueOf(localNumberOfdescriptions), timestamp, Collections.emptyList());
 			numberOfDescriptions = numberOfDescriptions + localNumberOfdescriptions;
 			numberOfEntities ++;
 		}
-		
+
 		double metricValue = ((double) (numberOfDescriptions)) / numberOfEntities;
 		this.notifyExporterListeners(ontologyIRI, ontologyIRI, OWL.Ontology.getURI(), Double.valueOf(metricValue), timestamp, Collections.emptyList());
 		return new MetricResult(metricValue);
@@ -70,17 +70,17 @@ public class DescriptionsPerObjectPropertyMetric extends AnnotationsPerEntityAbs
 	public String getName() {
 		return NAME;
 	}
-	
+
 	@Override
 	public String getIRI() {
-		return Namespaces.OQUO_NS + "DescriptionsPerObjectPropertyMetric";
+		return Prefixes.OQUO_HURON_NS + "DescriptionsPerObjectPropertyMetric";
 	}
-	
+
 	@Override
 	public String getObservablePropertyIRI() {
 		return RDFUtils.DESCRIPTIONS;
 	}
-	
+
 	@Override
 	public String getRankingFunctionIRI() {
 		return RankingFunctionTypes.RANKING_FUNCTION_HIGHER_BEST;

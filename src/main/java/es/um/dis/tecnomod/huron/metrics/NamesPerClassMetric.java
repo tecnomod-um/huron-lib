@@ -14,14 +14,14 @@ import es.um.dis.tecnomod.huron.dto.MetricResult;
 import es.um.dis.tecnomod.huron.main.Config;
 import es.um.dis.tecnomod.huron.services.OntologyUtils;
 import es.um.dis.tecnomod.huron.services.RDFUtils;
-import es.um.dis.tecnomod.oquo.utils.Namespaces;
+import es.um.dis.tecnomod.huron.main.Prefixes;
 import es.um.dis.tecnomod.oquo.utils.RankingFunctionTypes;
 
 /**
  * The Class NamesPerClassMetric.
  */
 public class NamesPerClassMetric extends AnnotationsPerEntityAbstractMetric {
-	
+
 	public NamesPerClassMetric() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -41,10 +41,10 @@ public class NamesPerClassMetric extends AnnotationsPerEntityAbstractMetric {
 	 */
 	@Override
 	public MetricResult calculate() throws OWLOntologyCreationException, FileNotFoundException, IOException, Exception {
-		
+
 		String ontologyIRI = RDFUtils.getOntologyIdentifier(getOntology());
 		Calendar timestamp = Calendar.getInstance();
-		
+
 		int numberOfNames = 0;
 		int numberOfEntities = 0;
 		for(OWLClass owlClass : super.getOntology().classesInSignature(this.getConfig().getImports()).collect(Collectors.toList())){
@@ -52,18 +52,18 @@ public class NamesPerClassMetric extends AnnotationsPerEntityAbstractMetric {
 				continue;
 			}
 			int localNumberOfNames = getNumberOfNames(owlClass);
-			
+
 			this.notifyExporterListeners(ontologyIRI, owlClass.getIRI().toString(), OWL.Class.getURI(), Integer.valueOf(localNumberOfNames), timestamp, Collections.emptyList());
 			numberOfNames = numberOfNames + localNumberOfNames;
 			numberOfEntities ++;
 		}
-		
+
 		double metricValue = ((double) (numberOfNames)) / numberOfEntities;
 		this.notifyExporterListeners(ontologyIRI, ontologyIRI, OWL.Ontology.getURI(), Double.valueOf(metricValue), timestamp, Collections.emptyList());
 
 		return new MetricResult(metricValue);
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see metrics.Metric#getName()
@@ -72,24 +72,24 @@ public class NamesPerClassMetric extends AnnotationsPerEntityAbstractMetric {
 	public String getName() {
 		return METRIC_NAME;
 	}
-	
+
 	@Override
 	public String getIRI() {
-		return Namespaces.OQUO_NS + "NamesPerClassMetric";
+		return Prefixes.OQUO_HURON_NS + "NamesPerClassMetric";
 	}
-	
+
 	public String getObservablePropertyIRI() {
 		return RDFUtils.NAMES;
 	}
-	
+
 	public String getInstrumentIRI() {
 		return RDFUtils.HURON;
 	}
-	
+
 	public String getUnitOfMeasureIRI() {
 		return null;
 	}
-	
+
 	@Override
 	public String getRankingFunctionIRI() {
 		return RankingFunctionTypes.RANKING_FUNCTION_HIGHER_BEST;

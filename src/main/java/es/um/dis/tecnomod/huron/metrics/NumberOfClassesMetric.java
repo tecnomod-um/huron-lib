@@ -12,14 +12,14 @@ import es.um.dis.tecnomod.huron.dto.MetricResult;
 import es.um.dis.tecnomod.huron.main.Config;
 import es.um.dis.tecnomod.huron.services.OntologyUtils;
 import es.um.dis.tecnomod.huron.services.RDFUtils;
-import es.um.dis.tecnomod.oquo.utils.Namespaces;
+import es.um.dis.tecnomod.huron.main.Prefixes;
 import es.um.dis.tecnomod.oquo.utils.RankingFunctionTypes;
 
 /**
  * The Class NumberOfClassesMetric.
  */
 public class NumberOfClassesMetric extends Metric {
-	
+
 	public NumberOfClassesMetric() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -45,9 +45,9 @@ public class NumberOfClassesMetric extends Metric {
 	public MetricResult calculate() throws OWLOntologyCreationException, FileNotFoundException, IOException, Exception {
 		String ontologyIRI = RDFUtils.getOntologyIdentifier(getOntology());
 		double metricValue = getOntology().classesInSignature(this.getConfig().getImports()).filter(owlClass -> (!OntologyUtils.isObsolete(owlClass, getOntology(), this.getConfig().getImports()))).count();
-		
+
 		this.notifyExporterListeners(ontologyIRI, ontologyIRI, OWL.Ontology.getURI(), Double.valueOf(metricValue), Calendar.getInstance(), Collections.emptyList());
-		
+
 		return new MetricResult(metricValue);
 	}
 
@@ -65,7 +65,7 @@ public class NumberOfClassesMetric extends Metric {
 
 	@Override
 	public String getIRI() {
-		return Namespaces.OQUO_NS + "NumberOfClassesMetric";
+		return Prefixes.OQUO_HURON_NS + "NumberOfClassesMetric";
 	}
 
 
@@ -74,7 +74,7 @@ public class NumberOfClassesMetric extends Metric {
 	public String getObservablePropertyIRI() {
 		return RDFUtils.NUMBER_OF_CLASSES;
 	}
-	
+
 	@Override
 	public String getRankingFunctionIRI() {
 		return RankingFunctionTypes.RANKING_FUNCTION_HIGHER_BEST;

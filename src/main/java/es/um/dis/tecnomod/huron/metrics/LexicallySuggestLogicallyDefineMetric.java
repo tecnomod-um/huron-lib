@@ -34,8 +34,8 @@ import es.um.dis.tecnomod.huron.services.OntologyGraphService;
 import es.um.dis.tecnomod.huron.services.OntologyGraphServiceImpl;
 import es.um.dis.tecnomod.huron.services.OntologyUtils;
 import es.um.dis.tecnomod.huron.services.RDFUtils;
+import es.um.dis.tecnomod.huron.main.Prefixes;
 import es.um.dis.tecnomod.oquo.dto.IssueInfoDTO;
-import es.um.dis.tecnomod.oquo.utils.Namespaces;
 import es.um.dis.tecnomod.oquo.utils.RankingFunctionTypes;
 
 /**
@@ -47,22 +47,22 @@ public class LexicallySuggestLogicallyDefineMetric extends OntoenrichMetric {
 
 	/** The Constant LOGGER. */
 	private final static Logger LOGGER = Logger.getLogger(LexicallySuggestLogicallyDefineMetric.class.getName());
-	
+
 	/** The max depth taken into account to check if two classes are axiomatically related */
 	private static final int MAX_DEPTH = 5;
-	
+
 	/** The Constant NAME. */
 	private static final String NAME = "Lexically suggest logically define";
 
 	/** The Constant IGNORED_AXIOMS. */
 	private static final List<AxiomType<?>> IGNORED_AXIOMS = Arrays.asList(AxiomType.DISJOINT_CLASSES,
 			AxiomType.DISJOINT_DATA_PROPERTIES, AxiomType.DISJOINT_OBJECT_PROPERTIES, AxiomType.DISJOINT_UNION);
-	
-	
-	
+
+
+
 	/** The reasoner. */
 	private OWLReasoner reasoner;
-	
+
 	/** The ontology graph service. */
 	private OntologyGraphService ontologyGraphService;
 
@@ -72,7 +72,7 @@ public class LexicallySuggestLogicallyDefineMetric extends OntoenrichMetric {
 	public LexicallySuggestLogicallyDefineMetric() {
 		ontologyGraphService = new OntologyGraphServiceImpl();
 	}
-	
+
 	public LexicallySuggestLogicallyDefineMetric(Config config) {
 		super(config);
 		ontologyGraphService = new OntologyGraphServiceImpl();
@@ -83,10 +83,10 @@ public class LexicallySuggestLogicallyDefineMetric extends OntoenrichMetric {
 	 */
 	public MetricResult calculate() throws OWLOntologyCreationException, FileNotFoundException, IOException, Exception {
 		/* Write header for detailed output file */
-		
+
 		String ontologyIRI = RDFUtils.getOntologyIdentifier(getOntology());
 		Calendar timestamp = Calendar.getInstance();
-		
+
 		// STEP 1: create the lexical environment
 		LexicalEnvironment lexicalEnvironment = this.getLexicalEnvironment();
 
@@ -96,8 +96,8 @@ public class LexicallySuggestLogicallyDefineMetric extends OntoenrichMetric {
 		// STEP 2: Perform lexical analysis with threshold
 		int numberOfClassesThreshold = this.getNumberOfClassesThreshold();
 		List<LexicalRegularity> lexicalRegularities = lexicalEnvironment.searchAllPatterns(numberOfClassesThreshold /* Minimum Coverage (in labels) */);
-		
-		
+
+
 
 		// STEP 3: apply a filter to get just LRs that are classes
 		RemoveNoClasses.execute(lexicalRegularities);
@@ -134,11 +134,11 @@ public class LexicallySuggestLogicallyDefineMetric extends OntoenrichMetric {
 				}
 				double localMetricResult = (double) localPositiveCases.size() / (localPositiveCases.size() + localNegativeCases.size());
 				this.notifyExporterListeners(ontologyIRI, owlClassA.getIRI().toString(), OWL.Class.getURI(), Double.valueOf(localMetricResult), timestamp, issues);
-				
+
 				positiveCasesCount += localPositiveCases.size();
 				negativeCasesCount += localNegativeCases.size();
 			}
-			
+
 		}
 		reasoner.flush();
 		reasoner.dispose();
@@ -160,7 +160,7 @@ public class LexicallySuggestLogicallyDefineMetric extends OntoenrichMetric {
 	 * @return the representing classes
 	 */
 	private Set<OWLClass> getRepresentingClasses(LexicalEnvironment lexicalEnvironment, LexicalRegularity lexicalRegularity) {
-		
+
 		Set<Label> labels = lexicalEnvironment.getLabel(lexicalRegularity);
 		Set<OWLClass> classes = new HashSet<OWLClass>();
 		for (Label label : labels) {
@@ -190,7 +190,7 @@ public class LexicallySuggestLogicallyDefineMetric extends OntoenrichMetric {
 		}
 		return reasoner;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see metrics.Metric#getName()
 	 */
@@ -201,7 +201,7 @@ public class LexicallySuggestLogicallyDefineMetric extends OntoenrichMetric {
 
 	@Override
 	public String getIRI() {
-		return Namespaces.OQUO_NS + "LexicallySuggestLogicallyDefineMetric";
+		return Prefixes.OQUO_HURON_NS + "LexicallySuggestLogicallyDefineMetric";
 	}
 
 	@Override

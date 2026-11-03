@@ -14,8 +14,8 @@ import es.um.dis.tecnomod.huron.dto.MetricResult;
 import es.um.dis.tecnomod.huron.issues.IssueTypes;
 import es.um.dis.tecnomod.huron.main.Config;
 import es.um.dis.tecnomod.huron.services.RDFUtils;
+import es.um.dis.tecnomod.huron.main.Prefixes;
 import es.um.dis.tecnomod.oquo.dto.IssueInfoDTO;
-import es.um.dis.tecnomod.oquo.utils.Namespaces;
 import es.um.dis.tecnomod.oquo.utils.RankingFunctionTypes;
 
 
@@ -35,10 +35,10 @@ public class AnnotationPropertiesWithNoNameMetric extends AnnotationsPerEntityAb
 
 	/** The Constant NAME. */
 	private static final String METRIC_NAME = "AnnotationProperties with no name";
-	
+
 	@Override
 	public MetricResult calculate() throws OWLOntologyCreationException, FileNotFoundException, IOException, Exception {
-		
+
 		String ontologyIRI = RDFUtils.getOntologyIdentifier(getOntology());
 		Calendar timestamp = Calendar.getInstance();
 		int numberOfAnnotationPropertiesWithNoName = 0;
@@ -51,7 +51,7 @@ public class AnnotationPropertiesWithNoNameMetric extends AnnotationsPerEntityAb
 
 				numberOfAnnotationPropertiesWithNoName++;
 			}else {
-				
+
 				this.notifyExporterListeners(ontologyIRI, owlAnnotationProperty.getIRI().toString(), OWL.AnnotationProperty.getURI(), Integer.valueOf(0), timestamp, Collections.emptyList());
 
 			}
@@ -60,9 +60,9 @@ public class AnnotationPropertiesWithNoNameMetric extends AnnotationsPerEntityAb
 		double metricValue = ((double) (numberOfAnnotationPropertiesWithNoName)) / numberOfEntities;
 		this.notifyExporterListeners(ontologyIRI, ontologyIRI, OWL.Ontology.getURI(), Double.valueOf(metricValue), timestamp, Collections.emptyList());
 
-		return new MetricResult(metricValue);		
+		return new MetricResult(metricValue);
 	}
-	
+
 
 	@Override
 	public String getName() {
@@ -72,7 +72,7 @@ public class AnnotationPropertiesWithNoNameMetric extends AnnotationsPerEntityAb
 
 	@Override
 	public String getIRI() {
-		return Namespaces.OQUO_NS + "AnnotationPropertiesWithNoNameMetric";
+		return Prefixes.OQUO_HURON_NS + "AnnotationPropertiesWithNoNameMetric";
 	}
 
 
@@ -80,7 +80,7 @@ public class AnnotationPropertiesWithNoNameMetric extends AnnotationsPerEntityAb
 	public String getObservablePropertyIRI() {
 		return RDFUtils.NAMES;
 	}
-	
+
 	@Override
 	public String getRankingFunctionIRI() {
 		return RankingFunctionTypes.RANKING_FUNCTION_LOWER_BEST;

@@ -14,14 +14,14 @@ import es.um.dis.tecnomod.huron.dto.MetricResult;
 import es.um.dis.tecnomod.huron.main.Config;
 import es.um.dis.tecnomod.huron.services.OntologyUtils;
 import es.um.dis.tecnomod.huron.services.RDFUtils;
-import es.um.dis.tecnomod.oquo.utils.Namespaces;
+import es.um.dis.tecnomod.huron.main.Prefixes;
 import es.um.dis.tecnomod.oquo.utils.RankingFunctionTypes;
 
 /**
  * The Class SynonymsPerDataPropertyMetric.
  */
 public class SynonymsPerDataPropertyMetric extends AnnotationsPerEntityAbstractMetric{
-	
+
 	public SynonymsPerDataPropertyMetric() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -44,7 +44,7 @@ public class SynonymsPerDataPropertyMetric extends AnnotationsPerEntityAbstractM
 	 */
 	@Override
 	public MetricResult calculate() throws OWLOntologyCreationException, FileNotFoundException, IOException, Exception {
-		
+
 		String ontologyIRI = RDFUtils.getOntologyIdentifier(getOntology());
 		Calendar timestamp = Calendar.getInstance();
 		int numberOfSynonyms = 0;
@@ -54,12 +54,12 @@ public class SynonymsPerDataPropertyMetric extends AnnotationsPerEntityAbstractM
 				continue;
 			}
 			int localNumberOfSynonyms = getNumberOfSynonyms(dataProperty);
-			
+
 			this.notifyExporterListeners(ontologyIRI, dataProperty.getIRI().toString(), OWL.DatatypeProperty.getURI(), Integer.valueOf(localNumberOfSynonyms), timestamp, Collections.emptyList());
 			numberOfSynonyms = numberOfSynonyms + localNumberOfSynonyms;
 			numberOfEntities ++;
 		}
-		
+
 		double metricValue = ((double) (numberOfSynonyms)) / numberOfEntities;
 		this.notifyExporterListeners(ontologyIRI, ontologyIRI, OWL.Ontology.getURI(), Double.valueOf(metricValue), timestamp, Collections.emptyList());
 		return new MetricResult(metricValue);
@@ -74,10 +74,10 @@ public class SynonymsPerDataPropertyMetric extends AnnotationsPerEntityAbstractM
 	public String getName() {
 		return NAME;
 	}
-	
+
 	@Override
 	public String getIRI() {
-		return Namespaces.OQUO_NS + "SynonymsPerDataPropertyMetric";
+		return Prefixes.OQUO_HURON_NS + "SynonymsPerDataPropertyMetric";
 	}
 
 
@@ -86,7 +86,7 @@ public class SynonymsPerDataPropertyMetric extends AnnotationsPerEntityAbstractM
 	public String getObservablePropertyIRI() {
 		return RDFUtils.SYNONYMS;
 	}
-	
+
 	@Override
 	public String getRankingFunctionIRI() {
 		return RankingFunctionTypes.RANKING_FUNCTION_HIGHER_BEST;

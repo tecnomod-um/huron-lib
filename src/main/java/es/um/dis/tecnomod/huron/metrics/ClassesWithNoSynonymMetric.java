@@ -15,8 +15,8 @@ import es.um.dis.tecnomod.huron.issues.IssueTypes;
 import es.um.dis.tecnomod.huron.main.Config;
 import es.um.dis.tecnomod.huron.services.OntologyUtils;
 import es.um.dis.tecnomod.huron.services.RDFUtils;
+import es.um.dis.tecnomod.huron.main.Prefixes;
 import es.um.dis.tecnomod.oquo.dto.IssueInfoDTO;
-import es.um.dis.tecnomod.oquo.utils.Namespaces;
 import es.um.dis.tecnomod.oquo.utils.RankingFunctionTypes;
 
 public class ClassesWithNoSynonymMetric extends AnnotationsPerEntityAbstractMetric {
@@ -35,10 +35,10 @@ public class ClassesWithNoSynonymMetric extends AnnotationsPerEntityAbstractMetr
 
 	/** The Constant NAME. */
 	private static final String METRIC_NAME = "Classes with no synonym";
-	
+
 	@Override
 	public MetricResult calculate() throws OWLOntologyCreationException, FileNotFoundException, IOException, Exception {
-		
+
 		String ontologyIRI = RDFUtils.getOntologyIdentifier(getOntology());
 		Calendar timestamp = Calendar.getInstance();
 		int numberOfClassesWithNoSynonym = 0;
@@ -46,24 +46,24 @@ public class ClassesWithNoSynonymMetric extends AnnotationsPerEntityAbstractMetr
 		for(OWLClass owlClass : super.getOntology().classesInSignature(this.getConfig().getImports()).collect(Collectors.toList())){
 			if (owlClass.isOWLNothing() || owlClass.isOWLThing() || OntologyUtils.isObsolete(owlClass, getOntology(), this.getConfig().getImports())) {
 				continue;
-			}				
+			}
 			int localNumberOfSynonyms = this.getNumberOfSynonyms(owlClass);
 			if (localNumberOfSynonyms == 0) {
 				IssueInfoDTO issue = new IssueInfoDTO(IssueTypes.CLASS_WITH_NO_SYNONYMS_ISSUE, owlClass.getIRI().toString(), String.format("The class %s does not have any synonym.", owlClass.getIRI().toQuotedString()));
 				this.notifyExporterListeners(ontologyIRI, owlClass.getIRI().toString(), OWL.Class.getURI(), Integer.valueOf(1), timestamp, issue);
 				numberOfClassesWithNoSynonym++;
 			}else {
-				
+
 				this.notifyExporterListeners(ontologyIRI, owlClass.getIRI().toString(), OWL.Class.getURI(), Integer.valueOf(0), timestamp, Collections.emptyList());
 			}
 			numberOfEntities ++;
 		}
 		double metricValue = ((double) (numberOfClassesWithNoSynonym)) / numberOfEntities;
 		this.notifyExporterListeners(ontologyIRI, ontologyIRI, OWL.Ontology.getURI(), Double.valueOf(metricValue), timestamp, Collections.emptyList());
-		
-		return new MetricResult(metricValue);	
+
+		return new MetricResult(metricValue);
 	}
-	
+
 
 	@Override
 	public String getName() {
@@ -73,7 +73,7 @@ public class ClassesWithNoSynonymMetric extends AnnotationsPerEntityAbstractMetr
 
 	@Override
 	public String getIRI() {
-		return Namespaces.OQUO_NS + "ClassesWithNoSynonymMetric";
+		return Prefixes.OQUO_HURON_NS + "ClassesWithNoSynonymMetric";
 	}
 
 
@@ -81,7 +81,7 @@ public class ClassesWithNoSynonymMetric extends AnnotationsPerEntityAbstractMetr
 	public String getObservablePropertyIRI() {
 		return RDFUtils.SYNONYMS;
 	}
-	
+
 	@Override
 	public String getRankingFunctionIRI() {
 		return RankingFunctionTypes.RANKING_FUNCTION_LOWER_BEST;
