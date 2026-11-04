@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
@@ -22,7 +23,7 @@ import es.um.dis.tecnomod.huron.services.OntologyUtils;
  * The Class AnnotationTest.
  */
 public class AnnotationTest {
-	
+
 
 	/**
 	 * Test.
@@ -41,15 +42,16 @@ public class AnnotationTest {
 				new DescriptionsPerObjectPropertyMetric(), new NamesPerDataPropertyMetric(), new SynonymsPerDataPropertyMetric(),
 				new DescriptionsPerDataPropertyMetric(), new NamesPerAnnotationPropertyMetric(), new SynonymsPerAnnotationPropertyMetric(),
 				new DescriptionsPerAnnotationPropertyMetric());
-		
+
 		for(Metric metric : metrics){
 			metric.setOntology(ontology);
 			double result = metric.calculateValue();
 			System.out.println(String.format("%s:\t%.3f", metric.getName(),result));
 		}
 	}
-	
+
 	@Test
+	@Ignore
 	public void test2() throws OWLOntologyCreationException {
 		List<String> ontologyPaths = Arrays.asList("/home/fabad/test_embed_comp/ontologies/foodon-full.owl", "/home/fabad/test_embed_comp/ontologies/go.owl" , "/home/fabad/test_embed_comp/ontologies/lkif-full-labelled.owl", "/home/fabad/test_embed_comp/ontologies/snomed.owl");
 		for (String ontologyPath : ontologyPaths) {
@@ -57,7 +59,7 @@ public class AnnotationTest {
 			System.out.println(String.format("%s -> %d class annotations", new File(ontologyPath).getName(), numberOfClassAnnotations));
 		}
 	}
-	
+
 	private int getNumberOfClassAnnotations(String ontologyPath) throws OWLOntologyCreationException {
 		AtomicInteger numberOfClassAnnotations = new AtomicInteger(0);
 		OWLOntologyManager m = OWLManager.createOWLOntologyManager();
