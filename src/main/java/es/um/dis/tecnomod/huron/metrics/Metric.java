@@ -26,6 +26,9 @@ import es.um.dis.tecnomod.oquo.utils.ScaleTypes;
  */
 public abstract class Metric {
 
+	private static final String HURON_SOFTWARE_AGENT_IRI = "https://purl.org/oquo-huron#huron-software-agent";
+	private static final String SOFTWARE_AGENT_IRI = "http://www.w3.org/ns/prov#SoftwareAgent";
+
 	/** The config */
 	private Config config;
 
@@ -212,6 +215,8 @@ public abstract class Metric {
 
 	protected ObservationInfoDTO getObservationInfo(String sourceDocumentIRI, String featureOfInterestIRI, String featureOfInterestTypeIRI, Object value, Calendar timestamp, List<IssueInfoDTO> issues) {
 		ObservationInfoDTO observationInfo = new ObservationInfoDTO();
+		observationInfo.setAgentIRI(HURON_SOFTWARE_AGENT_IRI);
+		observationInfo.setAgentTypeIRI(SOFTWARE_AGENT_IRI);
 		observationInfo.setSourceDocumentIRI(sourceDocumentIRI);
 		observationInfo.setFeatureOfInterestIRI(featureOfInterestIRI);
 		observationInfo.setFeatureOfInterestTypeIRI(featureOfInterestTypeIRI);

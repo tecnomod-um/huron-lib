@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>es.um.dis.tecnomod</groupId>
 	<artifactId>huron-lib</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 
 	<properties>
 		<graphlib.version>0.0.3</graphlib.version>
@@ -15,7 +15,7 @@
 		<jena.version>3.17.0</jena.version>
 		<joinery-dataframe.version>1.10</joinery-dataframe.version>
 		<tablesaw.version>0.43.1</tablesaw.version>
-		<oquo-instance-creator.version>0.0.6</oquo-instance-creator.version>
+		<oquo-instance-creator.version>0.0.7</oquo-instance-creator.version>
 	</properties>
 	<build>
 		<plugins>
